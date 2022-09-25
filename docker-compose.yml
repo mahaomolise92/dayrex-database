@@ -1,0 +1,35 @@
+version: '2' # specify docker-compose version
+# Define the services/containers to be run
+services:
+  database:
+    image: mysql:5.7
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      - MYSQL_DATABASE=darex
+      - MYSQL_ROOT_PASSWORD=Time-2473659412
+    ports:
+      - '3306:3306'
+    volumes:
+      - db:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  frontend:
+    #name of the first service
+    build: ./dayrex-web # specify the directory of the Dockerfile
+    ports:
+      - "4200:4200" # specify port forewarding
+    container_name: front-container
+    restart: always
+
+  backend:
+    #name of the first service
+    build: dayrex-api # specify the directory of the Dockerfile
+    ports:
+      - "3000:3000" # specify port forewarding
+    container_name: backend-container
+    restart: always
+volumes:
+  db:
+    driver: local
